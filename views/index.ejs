@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="bubbles">
+        <div class="bubble" style="left: 10%; width: 80px; height: 80px; animation-duration: 20s;"></div>
+        <div class="bubble" style="left: 20%; width: 25px; height: 25px; animation-duration: 15s; animation-delay: 2s;"></div>
+        <div class="bubble" style="left: 55%; width: 50px; height: 50px; animation-duration: 25s; animation-delay: 5s;"></div>
+        <div class="bubble" style="left: 70%; width: 15px; height: 15px; animation-duration: 18s; animation-delay: 1s;"></div>
+        <div class="bubble" style="left: 85%; width: 45px; height: 45px; animation-duration: 22s; animation-delay: 3s;"></div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h1><%= title %></h1>
+            <p><%= message %></p>
+            
+            <% if (error) { %>
+                <div class="error-badge">
+                    <span>⚠️ <%= error %></span>
+                </div>
+            <% } %>
+
+            <form action="/upload" method="POST" enctype="multipart/form-data" class="upload-form">
+                <div class="file-input-wrapper" id="drop-zone">
+                    <input type="file" name="pdf" id="pdf-file" required accept=".pdf" class="hidden-input" />
+                    <label for="pdf-file" class="file-label">
+                        <div class="upload-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        </div>
+                        <span id="file-name">Click or Drag PDF here</span>
+                        <span class="file-hint">Supports: .pdf (Max 10MB)</span>
+                    </label>
+                </div>
+                <button type="submit" class="btn">Convert to Excel</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('pdf-file');
+        const fileNameDisplay = document.getElementById('file-name');
+        const dropZone = document.getElementById('drop-zone');
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                fileNameDisplay.textContent = e.target.files[0].name;
+                dropZone.classList.add('has-file');
+            }
+        });
+
+        // Drag and drop effects
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropZone.classList.add('drag-over');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('drag-over');
+                
+                if (eventName === 'drop' && e.dataTransfer.files.length > 0) {
+                    fileInput.files = e.dataTransfer.files;
+                    // Trigger change manually
+                    fileInput.dispatchEvent(new Event('change'));
+                }
+            }, false);
+        });
+    </script>
+
+
+
+</body>
+</html>
